@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Specimen Size Calculator</title>
+  </head>
+  <body>
+    <h2>Specimen Size Calculator</h2>
+    <form method="POST">
+      Username: <input type="text" name="username" required /><br /><br />
+      Microscope Size (mm):
+      <input
+        type="number"
+        step="any"
+        name="microscope_size"
+        required
+      /><br /><br />
+      Magnification:
+      <input
+        type="number"
+        step="any"
+        name="magnification"
+        required
+      /><br /><br />
+      <input type="submit" value="Calculate" />
+    </form>
+
+    {% if result is not none %}
+    <h3>Actual Size: {{ result }} mm</h3>
+    {% endif %}
+  </body>
+</html>
