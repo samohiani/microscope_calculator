@@ -3,7 +3,7 @@ import sqlite3
 
 app = Flask(__name__)
 
-def insert_record(username, microscope_size, magnification, actual_size):
+def init_db():
     conn = sqlite3.connect("specimens.db")
     cursor = conn.cursor()
     cursor.execute('''
@@ -15,12 +15,26 @@ def insert_record(username, microscope_size, magnification, actual_size):
             actual_size REAL
         )
     ''')
+    conn.commit()
+    conn.close()
+
+def insert_record(username, microscope_size, magnification, actual_size):
+    conn = sqlite3.connect("specimens.db")
+    cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO records (username, microscope_size, magnification, actual_size)
         VALUES (?, ?, ?, ?)
     ''', (username, microscope_size, magnification, actual_size))
     conn.commit()
     conn.close()
+
+def get_all_records():
+    conn = sqlite3.connect("specimens.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT username, microscope_size, magnification, actual_size FROM records ORDER BY id DESC")
+    records = cursor.fetchall()
+    conn.close()
+    return records
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -32,7 +46,9 @@ def index():
         actual_size = microscope_size / magnification
         insert_record(username, microscope_size, magnification, actual_size)
         result = round(actual_size, 4)
-    return render_template("index.html", result=result)
+
+    records = get_all_records()
+    return render_template("index.html", result=result, records=records)
 
 import os
 
